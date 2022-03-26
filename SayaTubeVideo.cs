@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics.Contracts;
+
 
 namespace Mod5_1302204026
 {
@@ -15,15 +17,58 @@ namespace Mod5_1302204026
         {
             Random random = new Random();
             this.id = random.Next(10000, 99999);
-            if (title == "")
-                throw new NullReferenceException("title tidak boleh null");
-            if (title.Length > 100)
-                throw new Exception("panjang text maksimal 100");
-            this.title = title;
-            this.PlayCount = 0;
+            Contract.Requires(title != null);
+            Contract.Requires(title.Length > 200);
+
+            try
+            {
+                if (title.Length > 200) throw new Exception("Panjang jdudul harus < 200");
+                this.title = checked(title);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
+
+            try
+            {
+                if (title == "") throw new Exception("Title tidak kosong");
+                this.title = checked(title);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
         }
 
-        public void increasePlayCount(int a) { PlayCount++; }
+        public void increasePlayCount(int a) 
+        {
+            Contract.Requires(a <= 25000000);
+            try
+            {
+                if (a > 25000000) throw new Exception("Play Count tidak boleh > 25.000.000");
+                this.PlayCount += checked(a);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message); ;
+            }
+
+            Contract.Requires(a > 0);
+            try
+            {
+                if (a < 0) throw new Exception("Play Count tidak bisa negatif");
+                this.PlayCount += checked(a);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message); ;
+            }
+        }
 
         public int getPlayCount() { return this.PlayCount; }
 
@@ -31,9 +76,10 @@ namespace Mod5_1302204026
 
         public void PrintVideoDetails()
         {
-            Console.WriteLine(this.id);
-            Console.WriteLine(this.title);
-            Console.WriteLine(this.PlayCount);
+            Console.WriteLine("ID Video : " + this.id);
+            Console.WriteLine("Title Video : " + this.title);
+            Console.WriteLine("Playcount Video : " + this.PlayCount);
+            Console.WriteLine();
         }
     }
 }

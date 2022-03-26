@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics.Contracts;
+
 
 namespace Mod5_1302204026
 {
@@ -17,7 +19,27 @@ namespace Mod5_1302204026
             Random random = new Random();
             this.id = random.Next(10000, 99999);
             this.uploadedVideos = new List<SayaTubeVideo>();
-            this.Username = username;
+            try
+            {
+                if (username.Length > 100) throw new Exception("tidak di perbolehkan lebih dari 100");
+                this.Username = checked(username);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
+
+            try
+            {
+                if (username == "") throw new Exception("username harus di isi!");
+                this.Username = checked(username);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
         }
 
         public int GetTotalVideoPlayCount()
@@ -31,17 +53,46 @@ namespace Mod5_1302204026
 
         public void AddVideo(SayaTubeVideo a)
         {
-            uploadedVideos.Add(a);
+            Contract.Requires(a != null);
+            try
+            {
+                if (a == null) throw new Exception("Video tidak boleh null");
+                uploadedVideos.Add(a);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void PrintAllVideoPlaycount()
         {
             Console.WriteLine("User : " + this.Username);
-            for (int i = 0; i < uploadedVideos.Count; i++)
-                Console.WriteLine("Video " + (i + 1) + " Judul: " + uploadedVideos[i].getTitle());
+            try
+            {
+                for (int i = 0; i < uploadedVideos.Count; i++)
+                {
+                    if (i > 7) throw new Exception("Print Hanya di perbolehkan sebanyak 8 kali");
+                    Console.WriteLine("Video " + (i + 1) + " Judul: " + uploadedVideos[i].getTitle());
+
+                }
+
+
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message); ;
+            }
+
+
             Console.WriteLine();
-            Console.WriteLine("Total semua playcount : " + GetTotalVideoPlayCount());
+            Console.WriteLine("Total playCount : " + GetTotalVideoPlayCount());
 
         }
+
     }
+   
 }
